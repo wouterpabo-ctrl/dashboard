@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Rugby Dashboard 2025–2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg2:#f5f5f3;--txt:#1a1a1a;--txt2:#666;--txt3:#999;--brd:rgba(0,0,0,0.1);--brd2:rgba(0,0,0,0.18);--info:#1a6fba;--danger:#c0392b;--green:#1a7a3c;--warn-bg:#fff8e6;--warn-brd:#f0c040;--warn-txt:#7a5a00}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--txt:#f0f0f0;--txt2:#aaa;--txt3:#666;--brd:rgba(255,255,255,0.1);--brd2:rgba(255,255,255,0.2);--info:#4a9eda;--danger:#e05c4b;--green:#3aaa60;--warn-bg:#2a2000;--warn-brd:#7a6000;--warn-txt:#f0c040}}
+body{background:var(--bg2);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;gap:10px}
+#warn{display:none;width:100%;max-width:420px;background:var(--warn-bg);border:0.5px solid var(--warn-brd);border-radius:10px;padding:12px 14px}
+#warn h3{font-size:13px;font-weight:600;color:var(--warn-txt);margin-bottom:6px}
+#warn p{font-size:12px;color:var(--warn-txt);line-height:1.65;margin-bottom:8px}
+#warn ol{font-size:12px;color:var(--warn-txt);line-height:1.8;padding-left:18px}
+#warn a{color:var(--info);text-decoration:none;font-weight:500}
+#app{width:100%;max-width:420px;background:var(--bg);border:0.5px solid var(--brd);border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+#hdr{padding:12px 14px 10px;border-bottom:0.5px solid var(--brd);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hl .t{font-size:14px;font-weight:600;color:var(--txt)}
+.hl .s{font-size:11px;color:var(--txt3);margin-top:1px}
+#rbtn{flex-shrink:0;padding:5px 12px;border-radius:20px;border:0.5px solid var(--brd2);background:transparent;font-size:12px;cursor:pointer;color:var(--txt2);white-space:nowrap;display:flex;align-items:center;gap:4px;font-family:inherit}
+#rbtn:hover:not(:disabled){background:var(--bg2)}
+#rbtn:disabled{opacity:.4;cursor:default}
+#rbtn.ok{color:var(--green);border-color:var(--green)}
+#rbtn.err{color:var(--danger);border-color:var(--danger)}
+.spin{display:inline-block;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#ctabs{display:flex;overflow-x:auto;padding:7px 10px;gap:5px;border-bottom:0.5px solid var(--brd);scrollbar-width:none}
+#ctabs::-webkit-scrollbar{display:none}
+.ctab{position:relative;flex-shrink:0;padding:5px 11px;border-radius:20px;border:0.5px solid var(--brd2);background:transparent;font-size:11px;cursor:pointer;color:var(--txt2);white-space:nowrap;font-family:inherit}
+.ctab.active{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.badge{position:absolute;top:2px;right:2px;width:7px;height:7px;background:#e03c31;border-radius:50%;border:1.5px solid var(--bg);display:none}
+.ctab.hasnew .badge{display:block}
+#stabs{display:flex;padding:7px 10px;gap:5px;border-bottom:0.5px solid var(--brd)}
+.stab{flex:1;padding:5px 4px;border-radius:20px;border:0.5px solid var(--brd);background:transparent;font-size:11px;cursor:pointer;color:var(--txt2);font-family:inherit;text-align:center}
+.stab.active{background:var(--bg2);color:var(--txt);border-color:var(--brd2)}
+#main{height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--brd) transparent}
+#main::-webkit-scrollbar{width:3px}
+#main::-webkit-scrollbar-thumb{background:var(--brd)}
+.shdr{display:grid;grid-template-columns:20px 1fr 28px 28px 28px 34px;padding:6px 12px;font-size:10px;color:var(--txt3);border-bottom:0.5px solid var(--brd);text-transform:uppercase;letter-spacing:.04em}
+.srow{display:grid;grid-template-columns:20px 1fr 28px 28px 28px 34px;padding:9px 12px;align-items:center;border-bottom:0.5px solid var(--brd)}
+.srow:last-child{border-bottom:none}
+.sp{font-size:11px;color:var(--txt3)}
+.sn{font-size:12px;color:var(--txt2);text-align:center}
+.st{font-size:13px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+.stop .st{font-weight:600}
+.shi .st{color:var(--info);font-weight:600}
+.spt{font-size:13px;font-weight:600;color:var(--txt);text-align:right}
+.dhdr{padding:7px 12px 4px;font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;background:var(--bg2);border-bottom:0.5px solid var(--brd)}
+.dhdr.chg{color:#e03c31;background:rgba(224,60,49,.06)}
+.mrow{display:flex;align-items:center;padding:8px 12px;border-bottom:0.5px solid var(--brd);gap:5px}
+.mrow:last-child{border-bottom:none}
+.mrow.chg{background:rgba(224,60,49,.04)}
+.mh{flex:1;font-size:12px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ma{flex:1;font-size:12px;color:var(--txt);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms{font-size:12px;font-weight:600;color:var(--txt);min-width:54px;text-align:center;flex-shrink:0}
+.ms.nd{color:var(--txt3);font-weight:400;font-size:11px}
+.mhi{color:var(--info)!important;font-weight:600}
+#ftr{padding:8px 13px;border-top:0.5px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+#ftr-ts{font-size:11px;color:var(--txt3)}
+#ftr-lnk{font-size:11px;color:var(--info);text-decoration:none}
+.empty{padding:40px 16px;text-align:center;font-size:13px;color:var(--txt3);line-height:1.8}
+.err-box{padding:24px 16px;text-align:center}
+.err-box p{font-size:13px;color:var(--danger);line-height:1.6;margin-bottom:8px}
+.err-lnk{display:inline-block;margin-top:8px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--brd2);font-size:12px;cursor:pointer;color:var(--txt2);text-decoration:none;font-family:inherit;background:transparent}
+</style>
+</head>
+<body>
+
+<div id="warn">
+  <h3>⚠ Refresh werkt niet vanuit een lokaal bestand</h3>
+  <p>Browsers blokkeren externe requests als het bestand geopend is via <code>file://</code>. Host het bestand om de verversknop te activeren:</p>
+  <ol>
+    <li>Ga naar <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a></li>
+    <li>Sleep dit HTML-bestand naar het venster</li>
+    <li>Kopieer de URL die je krijgt (bijv. <em>xyz.netlify.app</em>)</li>
+    <li>Sla die URL op als bladwijzer — refresh werkt daar wél</li>
+  </ol>
+</div>
+
+<div id="app">
+  <div id="hdr">
+    <div class="hl"><div class="t">Rugby dashboard</div><div class="s">2025–2026</div></div>
+    <button id="rbtn" onclick="doRefresh()">↺ ververs</button>
+  </div>
+  <div id="ctabs"></div>
+  <div id="stabs">
+    <button class="stab active" onclick="setSub('stand',this)">Stand</button>
+    <button class="stab" onclick="setSub('results',this)">Uitslagen</button>
+    <button class="stab" onclick="setSub('program',this)">Programma</button>
+  </div>
+  <div id="main"></div>
+  <div id="ftr"><span id="ftr-ts">nog niet ververst</span><a id="ftr-lnk" href="#" target="_blank">allunited.nl ↗</a></div>
+</div>
+
+<script>
+// Show warning if opened from file://
+if(location.protocol==='file:'){document.getElementById('warn').style.display='block';}
+
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const isHi=(n,hi)=>hi.some(k=>n.toLowerCase().includes(k.toLowerCase()));
+const hash=d=>JSON.stringify(d);
+function nowTs(){const n=new Date();return[n.getDate(),n.getMonth()+1].map(x=>String(x).padStart(2,'0')).join('-')+' '+[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');}
+const MONTHS={januari:'jan',februari:'feb',maart:'mrt',april:'apr',mei:'mei',juni:'jun',juli:'jul',augustus:'aug',september:'sep',oktober:'okt',november:'nov',december:'dec'};
+function shortDate(s){const p=s.toLowerCase().replace(/^[a-z]+\s+/,'').split(/\s+/);if(p.length>=3)return`${parseInt(p[0])} ${MONTHS[p[1]]||p[1]}`;return s.slice(0,12);}
+function cleanName(s){return s.replace(/\s+[12]$/,'').trim();}
+
+function parseAllunited(html){
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  const tables=[...doc.querySelectorAll('table')];
+  const stand=[],results=[],program=[];
+  if(!tables.length)throw new Error('Geen tabellen gevonden');
+  [...tables[0].querySelectorAll('tr')].slice(1).forEach(row=>{
+    const td=[...row.querySelectorAll('td,th')];
+    if(td.length<7)return;
+    const pos=parseInt(td[0].textContent.trim());if(isNaN(pos))return;
+    stand.push([pos,cleanName(td[1].textContent.trim()),parseInt(td[2].textContent)||0,parseInt(td[3].textContent)||0,parseInt(td[4].textContent)||0,parseInt(td[6].textContent)||0]);
+  });
+  const dayMap={},dayOrder=[];let curDay=null;
+  tables.slice(1).forEach(tbl=>{
+    [...tbl.querySelectorAll('tr')].forEach(row=>{
+      const td=[...row.querySelectorAll('td,th')];if(!td.length)return;
+      const c0=td[0].textContent.trim();
+      if(/\b20\d{2}\b/.test(c0)&&c0.length>6){curDay=shortDate(c0);if(!dayMap[curDay]){dayMap[curDay]={r:[],p:[]};dayOrder.push(curDay);}return;}
+      if(['Tijd','#'].includes(c0))return;if(!curDay)return;
+      let home='',away='',score='',time='?';
+      if(td.length>=5){time=td[0].textContent.trim()||'?';home=cleanName(td[2].textContent.trim());away=cleanName(td[3].textContent.trim());score=td[4].textContent.trim();}
+      else if(td.length===4){time=td[0].textContent.trim()||'?';home=cleanName(td[1].textContent.trim());away=cleanName(td[2].textContent.trim());score=td[3].textContent.trim();}
+      if(!home||!away||home.length<2)return;
+      const sm=score.match(/(\d+)\s*[-–]\s*(\d+)/);
+      if(sm)dayMap[curDay].r.push([home,away,sm[1],sm[2]]);else dayMap[curDay].p.push([time,home,away]);
+    });
+  });
+  dayOrder.filter(d=>dayMap[d].r.length).slice(-2).reverse().forEach(d=>results.push({day:d,m:dayMap[d].r}));
+  dayOrder.filter(d=>dayMap[d].p.length).forEach(d=>program.push({day:d,m:dayMap[d].p}));
+  if(!stand.length)throw new Error('Stand niet gevonden');
+  return{stand,results,program};
+}
+
+async function withTimeout(promise,ms){
+  return Promise.race([promise,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+}
+
+async function fetchPage(url){
+  const proxies=[
+    ()=>fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r=>r.json()).then(d=>{if(!d.contents)throw new Error('leeg');return d.contents;}),
+    ()=>fetch(`https://corsproxy.io/?url=${encodeURIComponent(url)}`).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),
+    ()=>fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),
+    ()=>fetch(url).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
+  ];
+  const errors=[];
+  for(const fn of proxies){
+    try{return await withTimeout(fn(),9000);}
+    catch(e){errors.push(e.message);}
+  }
+  throw new Error('Alle proxies mislukt. Open het bestand via Netlify (zie uitleg hierboven).');
+}
+
+const erk_s=[[1,'The Dukes',19,18,1,84],[2,'Haagsche RC',17,14,3,67],[3,"'t Gooi",19,14,5,66],[4,'Eemland',18,13,5,62],[5,'RRC',18,14,4,55],[6,'Hoek v/h Land',18,9,9,44],[7,'RFC Haarlem',19,7,12,36],[8,'DIOK',18,7,11,34],[9,'RFC Oisterwijk',17,7,10,33],[10,'AAC',19,4,15,18],[11,'Cas RC',19,2,17,11],[12,'BRC',19,1,18,2]];
+const kl3_s=[[1,'Greate Pier',16,14,2,68],[2,"ERC '69",15,10,5,47],[3,'The Big Bulls',16,10,6,47],[4,'RC Dwingeloo',16,9,7,45],[5,'DragQuins',15,8,7,44],[6,'RC Drachten',16,8,8,37],[7,'Groningen 3',17,8,9,36],[8,'Feanster RC',14,6,8,28],[9,'RC Zwolle',17,4,13,19],[10,'The Rams',16,2,14,0]];
+const cubs_s=[[1,"ERC '69 CU",11,10,1,48],[2,'Zwolle CU',12,9,3,45],[3,'CL Twente CU',12,9,3,44],[4,'ADH/WF CU',12,6,5,32],[5,"'t Gooi CU",10,3,7,14],[6,'DR/FR CU',11,1,9,8],[7,'Haarlem CU',12,1,11,5]];
+const dam_s=[[1,'Hook/Rdam',7,7,0,32],[2,'AMazones',7,5,2,24],[3,'Scrumbeloos',8,5,3,24],[4,'Brabant Ladies',8,3,5,15],[5,'Foeste Moiden',8,2,6,7],[6,'Oemoemenoe',8,1,7,5]];
+
+const COMPS=[
+{id:'erk',label:'Ereklasse H',name:'Ereklasse Heren — 1e fase',url:'https://pr01.allunited.nl/x/competition/poule/RUGBYBOND/2025-2026/1635/ereklasse-heren-1e-fase',hi:[],stand:erk_s,prevHash:null,
+results:[{day:'18 apr',m:[['DIOK','The Dukes','17','22'],["'t Gooi",'Eemland','29','42'],['RFC Haarlem','Cas RC','31','22'],['BRC','AAC','7','80']]},{day:'11 apr',m:[['Cas RC','Eemland','14','45'],['RFC Oisterwijk','RRC','18','27']]}],
+program:[{day:'25 apr',m:[['15:00','Eemland','Haagsche RC'],['15:00','DIOK','RFC Oisterwijk']]},{day:'2 mei',m:[['15:00','Cas RC','The Dukes'],['16:00','RFC Haarlem','RRC']]},{day:'9 mei',m:[['15:00','RRC','AAC'],['15:00','The Dukes','Haagsche RC']]}]},
+{id:'kl3',label:'3e kl. H NO',name:'3e klasse Heren NoordOost',url:'https://pr01.allunited.nl/x/competition/poule/RUGBYBOND/2025-2026/1662/3e-klasse-heren-noordoost',hi:['Dwingeloo'],stand:kl3_s,prevHash:null,
+results:[{day:'12 apr',m:[['Feanster RC','Groningen 3','97','7'],['RC Dwingeloo',"ERC '69",'47','28'],['Greate Pier','The Big Bulls','14','49']]},{day:'29 mrt',m:[['Groningen 3','RC Zwolle','112','5'],['DragQuins','RC Dwingeloo','68','19']]}],
+program:[{day:'19 apr',m:[['14:00',"ERC '69",'DragQuins'],['14:00','RC Drachten','Feanster RC'],['15:00','The Big Bulls','RC Dwingeloo'],['15:00','The Rams','RC Zwolle']]},{day:'26 apr',m:[['15:00','Greate Pier','Feanster RC']]},{day:'3 mei',m:[['14:00',"ERC '69",'The Rams']]}]},
+{id:'cubs',label:'Cubs Ribbon A',name:'Cubs Ribbon Poule A — 2e fase',url:'https://pr01.allunited.nl/x/competition/poule/RUGBYBOND/2025-2026/1778/cubs-ribbon-poule-a-2e-fase',hi:['Drenthe','DR/FR'],stand:cubs_s,prevHash:null,
+results:[{day:'18 apr',m:[['CL Twente CU','Zwolle CU','38','36'],['DR/FR CU','Haarlem CU','34','41'],["ERC '69 CU","'t Gooi CU",'40','5']]},{day:'11 apr',m:[['Zwolle CU','DR/FR CU','43','14']]}],
+program:[{day:'9 mei',m:[['11:00','DR/FR CU',"'t Gooi CU"]]}]},
+{id:'dam',label:'2e kl. Dames',name:'2e klasse Dames — Degradatiepoule',url:'https://pr01.allunited.nl/x/competition/poule/RUGBYBOND/2025-2026/1656/2e-klasse-dames-2e-fase-%7C-degradatiepoule',hi:[],stand:dam_s,prevHash:null,
+results:[{day:'12 apr',m:[['Scrumbeloos','Oemoemenoe','38','29'],['Brabant Ladies','AMazones','47','22'],['Hook/Rdam','Foeste Moiden','30','0']]},{day:'22 mrt',m:[['Foeste Moiden','Scrumbeloos','22','43']]}],
+program:[{day:'19 apr',m:[['12:30','Foeste Moiden','Brabant Ladies'],['13:00','Oemoemenoe','AMazones'],['15:00','Scrumbeloos','Hook/Rdam']]},{day:'3 mei',m:[['13:00','AMazones','Hook/Rdam']]},{day:'10 mei',m:[['13:00','AMazones','Foeste Moiden'],['13:00','Hook/Rdam','Oemoemenoe']]}]}
+];
+COMPS.forEach(c=>c.prevHash=hash({stand:c.stand,results:c.results,program:c.program}));
+
+let curComp=0,curSub='stand',busy=false;
+function setBtn(html,cls=''){const b=document.getElementById('rbtn');b.innerHTML=html;b.disabled=cls==='loading';b.className=cls;}
+function render(){
+  const c=COMPS[curComp];
+  document.getElementById('ftr-lnk').href=c.url;
+  const el=document.getElementById('main');el.innerHTML='';
+  if(curSub==='stand'){
+    const h=document.createElement('div');h.className='shdr';
+    h.innerHTML='<span>#</span><span>Team</span><span style="text-align:center">GW</span><span style="text-align:center">W</span><span style="text-align:center">V</span><span style="text-align:right">Pnt</span>';
+    el.appendChild(h);
+    c.stand.forEach(([pos,team,gw,w,v,pnt])=>{
+      const d=document.createElement('div');
+      d.className='srow'+(pos<=3?' stop':'')+(isHi(team,c.hi)?' shi':'');
+      d.innerHTML=`<span class="sp">${pos}</span><span class="st">${esc(team)}</span><span class="sn">${gw}</span><span class="sn">${w}</span><span class="sn">${v}</span><span class="spt">${pnt}</span>`;
+      el.appendChild(d);
+    });
+  } else {
+    const list=curSub==='results'?c.results:c.program;
+    if(!list.length){el.innerHTML='<div class="empty">Geen data beschikbaar</div>';return;}
+    list.forEach(({day,m,chg})=>{
+      const dh=document.createElement('div');dh.className='dhdr'+(chg?' chg':'');dh.textContent=day+(chg?' ●':'');el.appendChild(dh);
+      m.forEach(row=>{
+        const r=document.createElement('div');r.className='mrow'+(chg?' chg':'');
+        if(curSub==='results'){const[h,u,sh,su]=row;r.innerHTML=`<span class="mh ${isHi(h,c.hi)?'mhi':''}">${esc(h)}</span><span class="ms">${sh} – ${su}</span><span class="ma ${isHi(u,c.hi)?'mhi':''}">${esc(u)}</span>`;}
+        else{const[t,h,u]=row;r.innerHTML=`<span class="mh ${isHi(h,c.hi)?'mhi':''}">${esc(h)}</span><span class="ms nd">${t}</span><span class="ma ${isHi(u,c.hi)?'mhi':''}">${esc(u)}</span>`;}
+        el.appendChild(r);
+      });
+    });
+  }
+}
+function setComp(i,btn){curComp=i;document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');btn.classList.remove('hasnew');render();}
+function setSub(s,btn){curSub=s;document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
+
+async function doRefresh(){
+  if(busy)return;busy=true;
+  setBtn('<span class="spin">↺</span> ophalen…','loading');
+  const c=COMPS[curComp];
+  try{
+    const html=await fetchPage(c.url);
+    const parsed=parseAllunited(html);
+    const newHash=hash({stand:parsed.stand,results:parsed.results,program:parsed.program});
+    const changed=newHash!==c.prevHash;
+    if(changed){
+      parsed.results.forEach((day,i)=>{day.chg=!c.results[i]||hash(day.m)!==hash((c.results[i]||{}).m);});
+      parsed.program.forEach((day,i)=>{day.chg=!c.program[i]||hash(day.m)!==hash((c.program[i]||{}).m);});
+    }
+    c.stand=parsed.stand;c.results=parsed.results;c.program=parsed.program;c.prevHash=newHash;
+    if(changed)document.querySelectorAll('.ctab')[curComp].classList.add('hasnew');
+    const ts=nowTs();
+    document.getElementById('ftr-ts').textContent='ververst '+ts;
+    render();
+    setBtn(`✓ ${ts}`,'ok');
+    setTimeout(()=>setBtn('↺ ververs',''),4000);
+  }catch(e){
+    document.getElementById('main').innerHTML=`<div class="err-box"><p>${esc(e.message)}</p><a class="err-lnk" href="${esc(c.url)}" target="_blank">Open allunited.nl ↗</a><br><button class="err-lnk" onclick="render()" style="margin-top:6px">← opgeslagen data</button></div>`;
+    setBtn('↺ ververs','err');setTimeout(()=>setBtn('↺ ververs',''),2500);
+  }
+  busy=false;
+}
+
+const ct=document.getElementById('ctabs');
+COMPS.forEach((c,i)=>{
+  const b=document.createElement('button');
+  b.className='ctab'+(i===0?' active':'');
+  b.innerHTML=`${esc(c.label)}<span class="badge"></span>`;
+  b.onclick=()=>setComp(i,b);ct.appendChild(b);
+});
+render();
+</script>
+</body>
+</html>
